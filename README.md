@@ -19,21 +19,21 @@ O projeto também está sendo desenvolvido de forma incremental, com novas funci
 ## ⚙️ Funcionalidades
 ### Atualmente implementado
 
-- Criação automática do banco de dados SQLite
+- [x] Criação automática do banco de dados SQLite
 
-- Criação da tabela de produtos
+- [x] Criação da tabela de produtos
 
-- Cadastro de produtos
+- [x] Cadastro de produtos
 
-- Consulta de produtos
+- [x] Consulta de produtos
 
-- Busca por código interno do produto
+- [x] Busca por código interno do produto
 
-- Busca por código de barras
+- [x] Busca por código de barras
 
-- Armazenamento de preço e estoque
+- [x] Armazenamento de preço e estoque
 
-- Identificação única dos produtos
+- [x] Identificação única dos produtos
 
 ## 🚧 Em desenvolvimento / planejado
 
