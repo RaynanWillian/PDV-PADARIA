@@ -73,7 +73,8 @@ O projeto também está sendo desenvolvido de forma incremental, com novas funci
 - sqlite3 — biblioteca padrão do Python para comunicação com o SQLite
 - Visual Studio Code — ambiente utilizado durante o desenvolvimento
 - Git e GitHub — versionamento e armazenamento do código
-- 📂 Estrutura do projeto
+
+## 📂 Estrutura do projeto
 
 A estrutura pode evoluir conforme novas funcionalidades forem adicionadas.
 
@@ -98,7 +99,7 @@ ou:
 
 py --version
 ### 2. Clone o repositório
-
+```bash
 git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
 
 Entre na pasta do projeto:
@@ -113,6 +114,8 @@ py main.py
 
 O banco de dados SQLite será utilizado localmente pelo sistema.
 
+---
+``` markdown
 
 ### 💻 Como usar
 
