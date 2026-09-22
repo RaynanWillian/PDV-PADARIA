@@ -1,5 +1,5 @@
 # PDV PADARIA
-Sisitema de PDV para padaria desenvolvido em Python e SQLite.
+
 🥖 Sistema de PDV para Padaria
 
 Sistema de Ponto de Venda (PDV) desenvolvido em Python e SQLite, criado para auxiliar no controle de produtos e no registro de vendas de uma padaria.
