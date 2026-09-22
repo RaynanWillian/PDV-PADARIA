@@ -136,7 +136,33 @@ def excluir_produto():
     conexao.close()
 
 def cadastrar_produto():
-    codigo = int(input("Digite o código do produto: "))
+
+    while True:
+        try:
+            codigo = int(input("Digite o código do produto: "))
+        except ValueError:
+            print("Digite apenas números.")
+            continue
+
+        conexao = sqlite3.connect("padaria.db")
+        cursor = conexao.cursor()
+
+        cursor.execute("""
+            SELECT codigo
+            FROM produtos
+            WHERE codigo = ?
+        """, (codigo,))
+
+        resultado = cursor.fetchone()
+
+        conexao.close()
+
+        if resultado is not None:
+            print("Esse código já está cadastrado. Use outro código.")
+            continue
+
+        break
+
     codigo_barras = input("Digite o código de barras do produto: ")
     nome = input("Digite o nome do produto: ")
     preco = float(input("Digite o preço do produto: "))

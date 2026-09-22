@@ -136,7 +136,13 @@ def excluir_produto():
     conexao.close()
 
 def cadastrar_produto():
-    codigo = int(input("Digite o código do produto: "))
+    while True:
+        try:
+            codigo = int(input("Digite o código do produto: "))
+            break
+        except ValueError:
+            print("Digite apenas números.")
+
     codigo_barras = input("Digite o código de barras do produto: ")
     nome = input("Digite o nome do produto: ")
     preco = float(input("Digite o preço do produto: "))
