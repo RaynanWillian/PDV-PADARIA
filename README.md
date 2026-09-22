@@ -78,11 +78,11 @@ O projeto também está sendo desenvolvido de forma incremental, com novas funci
 
 A estrutura pode evoluir conforme novas funcionalidades forem adicionadas.
 
-PDV_PADARIA/
-│
-├── padaria.db
-├── main.py
-└── README.md
+PDV_PADARIA/\n
+│\n
+├── padaria.db\n
+├── main.py\n
+└── README.md\n
 
 A estrutura acima representa a organização inicial do projeto e poderá ser modificada durante o desenvolvimento.
 
