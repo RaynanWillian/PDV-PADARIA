@@ -37,35 +37,35 @@ O projeto também está sendo desenvolvido de forma incremental, com novas funci
 
 ## 🚧 Em desenvolvimento / planejado
 
-- [] Registro de vendas
+- [ ] Registro de vendas
 
-- [] Cálculo automático do total da venda
+- [ ] Cálculo automático do total da venda
 
-- [] Seleção de produtos por código ou código de barras
+- [ ] Seleção de produtos por código ou código de barras
 
-- [] Controle de estoque após a venda
+- [ ] Controle de estoque após a venda
 
-- [] Diferentes formas de pagamento
+- [ ] Diferentes formas de pagamento
 
-- [] Pagamento via Pix
+- [ ] Pagamento via Pix
 
-- [] Pagamento em débito
+- [ ] Pagamento em débito
 
-- [] Pagamento em crédito parcelado
+- [ ] Pagamento em crédito parcelado
 
-- [] Registro de data e horário das vendas
+- [ ] Registro de data e horário das vendas
 
-- [] Consulta do histórico de vendas
+- [ ] Consulta do histórico de vendas
 
-- [] Cancelamento e alteração de vendas
+- [ ] Cancelamento e alteração de vendas
 
-- [] Controle administrativo de estoque
+- [ ] Controle administrativo de estoque
 
-- [] Abertura e fechamento de caixa
+- [ ] Abertura e fechamento de caixa
 
-- [] Integração com leitor de código de barras
+- [ ] Integração com leitor de código de barras
 
-- [] Geração de comprovante de venda
+- [ ] Geração de comprovante de venda
 
 ## 🛠️ Tecnologias
 - Python — linguagem principal do projeto
@@ -99,7 +99,7 @@ ou:
 
 py --version
 ### 2. Clone o repositório
-```bash
+
 git clone https://github.com/SEU-USUARIO/SEU-REPOSITORIO.git
 
 Entre na pasta do projeto:
@@ -113,9 +113,6 @@ Caso o computador utilize o comando py:
 py main.py
 
 O banco de dados SQLite será utilizado localmente pelo sistema.
-
----
-``` markdown
 
 ### 💻 Como usar
 
