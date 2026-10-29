@@ -13,7 +13,9 @@ CREATE TABLE IF NOT EXISTS produtos (
     codigo_barras TEXT,
     nome TEXT NOT NULL,
     preco REAL NOT NULL,
-    estoque INTEGER NOT NULL
+    estoque INTEGER NOT NULL,
+    tipo_controle TEXT NOT NULL DEFAULT 'UNIDADE',
+    CHECK (tipo_controle IN ('UNIDADE', 'SEM_CONTROLE'))
 )
 """)
 
@@ -42,8 +44,66 @@ def consultar_produto():
     else:
         print("Opção inválida.")
 
+def consultar_codigo_barras():
+    # validar o código de barras
+        codigo_barras = input("Digite o código de barras: ").strip()
+
+        if codigo_barras =="":
+            print("Consulta cancelada.")
+            return
+        
+        conexao = sqlite3.connect("padaria.db")
+        cursor = conexao.cursor()
+    
+        cursor.execute("""
+            SELECT codigo, codigo_barras, nome, preco, estoque
+            FROM produtos
+            WHERE codigo_barras = ?
+        """, (codigo_barras,))
+
+        resultado = cursor.fetchone()
+        if resultado is None:
+            print("Esse código de barras não encontrado.")
+        else:
+            print("Produto: ", resultado[2])
+            print("Código: ", resultado[0])
+            print("Código de barras: ", resultado[1])
+            print("Preço: ", resultado[3])
+            print("Estoque: ", resultado[4])
+
+        conexao.close()
+
+def consultar_codigo_interno():
+    codigo_interno = input("Digite o código interno: ")
+
+    conexao = sqlite3.connect("padaria.db")
+    cursor = conexao.cursor()
+
+    cursor.execute("""
+        SELECT codigo, codigo_barras, nome, preco, estoque
+        FROM produtos
+        WHERE codigo = ?
+        """, (codigo_interno,))
+    
+    resultado = cursor.fetchone()
+    if resultado is None:
+        print("Não encontrado.")
+    else:
+        print("Produto: ", resultado[2])
+        print("Código: ", resultado[0])
+        print("Código de barras: ", resultado[1])
+        print("Preço: ", resultado[3])
+        print("Estoque: ", resultado[4])
+
+    conexao.close()
+
 def alterar_produto():
-    codigo = int(input("Digite o código do produto que deseja alterar: "))
+    while True:
+        try:
+            codigo = int(input("Digite o código do produto que deseja alterar: "))
+            break
+        except ValueError:
+            print("Código inválido. Por favor, digite apenas números.")
 
     conexao = sqlite3.connect("padaria.db")
     cursor = conexao.cursor()
@@ -68,9 +128,41 @@ def alterar_produto():
     print("Estoque: ", resultado[4])
 
     novo_nome = input("Digite o novo nome do produto (deixe em branco para não alterar): ")
-    novo_preco = input("Digite o novo preço do produto (deixe em branco para não alterar): ")
-    novo_estoque = input("Digite a nova quantidade em estoque (deixe em branco para não alterar): ")
 
+    while True:
+        novo_preco = input("Digite o novo preço do produto (deixe em branco para não alterar): ").strip()
+        #Validação do preço
+        if novo_preco == "":
+            break
+
+        try:
+            preco = float(novo_preco.replace(",", "."))
+        except ValueError:
+            print("Preço inválido. Por favor, digite apenas números.")
+            continue
+
+        if preco <= 0:
+            print("Preço inválido. Por favor, digite um valor maior que zero.")
+            continue
+        break
+
+    novo_estoque = input("Digite a nova quantidade em estoque (deixe em branco para não alterar): ").strip()
+
+    estoque = None
+    
+    if novo_preco != "":
+        try:
+            estoque = int(novo_estoque)
+        except ValueError:
+            print("Estoque inválido. Por favor, digite apenas números inteiros.")
+            conexao.close()
+            return
+
+        if estoque < 0:
+            print("Estoque inválido. Por favor, digite um valor maior ou igual a zero.")
+            conexao.close()
+            return
+    
     if novo_nome:
         cursor.execute("""
             UPDATE produtos
@@ -80,25 +172,25 @@ def alterar_produto():
 
     if novo_preco:
         cursor.execute("""
-            UPDATE produtos
-            SET preco = ?
-            WHERE codigo = ?
-        """, (float(novo_preco), codigo))
+        UPDATE produtos
+        SET preco = ?
+        WHERE codigo = ?
+        """, (preco, codigo))
 
-    if novo_estoque:
+    if estoque is not None:
         cursor.execute("""
-            UPDATE produtos
-            SET estoque = ?
-            WHERE codigo = ?
-        """, (int(novo_estoque), codigo))
-
-    conexao.commit()
-    conexao.close()
-
-    print("\nProduto alterado com sucesso!")
+        UPDATE produtos
+        SET estoque = ?
+        WHERE codigo = ?
+        """, (estoque, codigo))
 
 def excluir_produto():
-    codigo = int(input("Digite o código do produto que deseja excluir: "))
+    while True:
+        try:
+            codigo = int(input("Digite o código do produto que deseja excluir: "))
+            break
+        except ValueError:
+            print("Código inválido. Por favor, digite apenas números.")
 
     conexao = sqlite3.connect("padaria.db")
     cursor = conexao.cursor()
@@ -134,80 +226,121 @@ def excluir_produto():
         print("\nExclusão cancelada.")
 
     conexao.close()
-
+   
 def cadastrar_produto():
+    # 1. Validar o código interno
     while True:
         try:
             codigo = int(input("Digite o código do produto: "))
-            break
         except ValueError:
-            print("Digite apenas números.")
+            print("Digite apenas números inteiros.")
+            continue
 
-    codigo_barras = input("Digite o código de barras do produto: ")
-    nome = input("Digite o nome do produto: ")
-    preco = float(input("Digite o preço do produto: "))
-    estoque = int(input("Digite a quantidade em estoque: "))
+        if codigo <= 0:
+            print("Digite um número positivo.")
+            continue
 
+        conexao = sqlite3.connect("padaria.db")
+        cursor = conexao.cursor()
+
+        cursor.execute(
+            "SELECT codigo FROM produtos WHERE codigo = ?",
+            (codigo,)
+        )
+        resultado = cursor.fetchone()
+        conexao.close()
+
+        if resultado is not None:
+            print("Esse código já está cadastrado. Use outro.")
+            continue
+
+        break
+
+    # 2. Validar o código de barras
+    while True:
+        codigo_barras = input(
+            "Digite o código de barras (ou Enter para deixar vazio): "
+        ).strip()
+
+        if codigo_barras == "":
+            codigo_barras = None
+            break
+
+        conexao = sqlite3.connect("padaria.db")
+        cursor = conexao.cursor()
+
+        cursor.execute(
+            "SELECT codigo FROM produtos WHERE codigo_barras = ?",
+            (codigo_barras,)
+        )
+        resultado = cursor.fetchone()
+        conexao.close()
+
+        if resultado is not None:
+            print("Esse código de barras já está cadastrado.")
+            continue
+
+        break
+
+    # 3. Validar o nome
+    while True:
+        nome = input("Digite o nome do produto: ").strip()
+
+        if not nome:
+            print("O nome não pode ficar vazio.")
+            continue
+
+        break
+
+    # 4. Validar o preço
+    while True:
+        try:
+            preco = float(
+                input("Digite o preço do produto: ").replace(",", ".")
+            )
+        except ValueError:
+            print("Digite um preço válido, como 10,50.")
+            continue
+
+        if preco <= 0:
+            print("O preço deve ser maior que zero.")
+            continue
+
+        break
+
+    # 5. Validar o estoque
+    while True:
+        try:
+            estoque = int(input("Digite a quantidade em estoque: "))
+        except ValueError:
+            print("Digite uma quantidade inteira.")
+            continue
+
+        if estoque < 0:
+            print("O estoque não pode ser negativo.")
+            continue
+
+        break
+
+    # 6. Salvar no banco de dados
     conexao = sqlite3.connect("padaria.db")
     cursor = conexao.cursor()
 
-    cursor.execute("""
-        INSERT INTO produtos (codigo, codigo_barras, nome, preco, estoque)
-        VALUES (?, ?, ?, ?, ?)
-    """, (codigo, codigo_barras, nome, preco, estoque))
+    try:
+        cursor.execute("""
+            INSERT INTO produtos
+                (codigo, codigo_barras, nome, preco, estoque)
+            VALUES (?, ?, ?, ?, ?)
+        """, (codigo, codigo_barras, nome, preco, estoque))
 
-    conexao.commit()
-    conexao.close()
+        conexao.commit()
+        print("\nProduto cadastrado com sucesso!")
 
-    print("\nProduto cadastrado com sucesso!")
+    except sqlite3.IntegrityError:
+        print("Erro: esse código interno já está cadastrado.")
 
-def consultar_codigo_barras():
-    codigo_barras = input("Digite o código de barras: ")
-
-    conexao = sqlite3.connect("padaria.db")
-    cursor = conexao.cursor()
-    
-    cursor.execute("""
-        SELECT codigo, codigo_barras, nome, preco, estoque
-        FROM produtos
-        WHERE codigo_barras = ?
-    """, (codigo_barras,))
-
-    resultado = cursor.fetchone()
-    if resultado is None:
-        print("Não encontrado.")
-    else:
-        print("Produto: ", resultado[2])
-        print("Código: ", resultado[0])
-        print("Código de barras: ", resultado[1])
-        print("Preço: ", resultado[3])
-        print("Estoque: ", resultado[4])
-
-    conexao.close()
-
-def consultar_codigo_interno():
-    codigo_interno = input("Digite o código interno: ")
-
-    conexao = sqlite3.connect("padaria.db")
-    cursor = conexao.cursor()
-
-    cursor.execute("""
-        SELECT codigo, codigo_barras, nome, preco, estoque
-        FROM produtos
-        WHERE codigo = ?
-        """, (codigo_interno,))
-    
-    resultado = cursor.fetchone()
-    if resultado is None:
-        print("Não encontrado.")
-    else:
-        print("Produto: ", resultado[2])
-        print("Código: ", resultado[0])
-        print("Código de barras: ", resultado[1])
-        print("Preço: ", resultado[3])
-        print("Estoque: ", resultado[4])
-
-    conexao.close()
+    finally:
+        conexao.close()
 
 # -----------------------
 # MENU PRINCIPAL
